@@ -199,6 +199,23 @@
   }
 
   /* Custom bike marker */
+  .bike-year {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(26,26,14,0.82);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
   .bike-marker {
     background: #fff;
     border: 2.5px solid #1a1a0e;
@@ -211,6 +228,7 @@
     box-shadow: 0 3px 10px rgba(0,0,0,0.35);
     transition: transform 0.15s, box-shadow 0.15s;
     cursor: pointer;
+    position: relative;
   }
 
   .bike-marker:hover { transform: scale(1.2); box-shadow: 0 5px 16px rgba(0,0,0,0.45); }
@@ -369,7 +387,7 @@
 </header>
 
 <div class="stats-bar">
-  <div>🗺 Výletů: <span id="count">35</span></div>
+  <div>🗺 Výletů: <span id="count">39</span></div>
   <div>📅 Od roku: <span>2006</span></div>
   <div>🌍 Česko & okolí</div>
 </div>
@@ -388,41 +406,45 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const trips = [
-  { kdy:"jaro 2026", kde:"Sušice", lat:49.2303276, lng:13.5197009, loc:"https://mapy.com/cs/turisticka?q=JEZ%26SPI%20Su%C5%A1ice&source=firm&id=13297260&ds=1&x=13.5197009&y=49.2303276&z=17", foto:"https://photos.app.goo.gl/3NPg6mSrj9p26QGa7" },
-  { kdy:"podzim 2025", kde:"Litoměřice", lat:50.5428694, lng:14.140905, loc:"https://mapy.com/cs/turisticka?q=Litom%C4%9B%C5%99ice&source=muni&id=1864&ds=1&x=14.1409050&y=50.5428694&z=12", foto:"https://photos.app.goo.gl/wyQr584PH3cLeEYX8" },
-  { kdy:"jaro 2025", kde:"Kroměříž", lat:49.2802262, lng:17.4006191, loc:"https://mapy.com/cs/turisticka?q=Krom%C4%9B%C5%99%C3%AD%C5%BE&source=muni&id=3117&ds=1&x=17.4006191&y=49.2802262&z=12", foto:"https://photos.app.goo.gl/6EpEhpMq8nNFhm3i6" },
-  { kdy:"podzim 2024", kde:"Broumov", lat:50.5995311, lng:16.3473304, loc:"https://mapy.com/cs/turisticka?q=Broumov&source=muni&id=2469&ds=1&x=16.3473304&y=50.5995311&z=12", foto:"https://photos.app.goo.gl/2hviimxtxq9V1rDQ8" },
-  { kdy:"jaro 2024", kde:"Nové Město n. Metují", lat:50.3510712, lng:16.1468419, loc:"https://mapy.com/cs/turisticka?q=Nov%C3%A9%20M%C4%9Bsto%20nad%20Metuj%C3%AD&source=muni&id=2504&ds=1&x=16.1468419&y=50.3510712&z=13", foto:"https://photos.app.goo.gl/Mfwzm5NyECsEp5P87" },
-  { kdy:"podzim 2023", kde:"Dražíč", lat:49.3071685, lng:14.3678051, loc:"https://mapy.com/cs/turisticka?q=Dra%C5%BE%C3%AD%C4%8D&source=muni&id=4826&ds=1&x=14.3678051&y=49.3071685&z=13", foto:"https://photos.app.goo.gl/a4htnx6VdyJio1Q16" },
-  { kdy:"jaro 2023", kde:"Luka nad Jihlavou", lat:49.3776849, lng:15.7022484, loc:"https://mapy.com/cs/turisticka?q=Luka%20nad%20Jihlavou&source=muni&id=5143&ds=1&x=15.7022484&y=49.3776849&z=12", foto:"https://photos.app.goo.gl/jAUXiydZgHB1t4bK8" },
-  { kdy:"podzim 2022", kde:"Krásná Lípa", lat:50.9108735, lng:14.4833708, loc:"https://mapy.com/cs/turisticka?q=Kr%C3%A1sn%C3%A1%20L%C3%ADpa&source=muni&id=1693&ds=1&x=14.4833708&y=50.9108735&z=12", foto:"https://photos.app.goo.gl/LKbFXrLvTCsrHf8X8" },
-  { kdy:"jaro 2022", kde:"Kladská - Slavkovský les", lat:50.0305566, lng:12.6589932, loc:"https://mapy.com/cs/turisticka?q=Kladsk%C3%A1&source=ward&id=5470&ds=1&x=12.6589932&y=50.0305566&z=13", foto:"https://photos.app.goo.gl/zsTqk44MzRuZWNMc6" },
-  { kdy:"podzim 2021", kde:"Studenec - Podkrkonoší", lat:50.5697717, lng:15.5413497, loc:"https://mapy.com/cs/turisticka?source=firm&id=198603&ds=1&x=15.5413497&y=50.5697717&z=17", foto:"https://photos.app.goo.gl/aHixNwdMXGWqW4S38" },
-  { kdy:"jaro 2020", kde:"Čtyřkoly", lat:49.8728741, lng:14.7143029, loc:"https://mapy.com/cs/turisticka?q=%C4%8Dty%C5%99koly&source=muni&id=3482&ds=2&x=14.7143029&y=49.8728741&z=14", foto:"https://photos.app.goo.gl/QTECouTwE73a4Zzp9" },
-  { kdy:"podzim 2019", kde:"Onen svět", lat:49.5590203, lng:14.2378634, loc:"https://mapy.com/cs/turisticka?q=Langova%20rozhledna&source=base&id=1834700&ds=1&x=14.2378634&y=49.5590203&z=17", foto:"https://photos.app.goo.gl/yDQwEnVpEjQMsoH56" },
-  { kdy:"jaro 2019", kde:"Josefův důl", lat:50.7937535, lng:15.2138523, loc:"https://mapy.com/cs/turisticka?q=josefuv%20dul&source=muni&id=1793&ds=2&x=15.2138523&y=50.7937535&z=12", foto:"https://photos.app.goo.gl/kmoUc2LHiA3AKjTh6" },
-  { kdy:"jaro 2018", kde:"Žlebská Lhotka - Železné hory", lat:49.9014353, lng:15.5570644, loc:"https://mapy.com/cs/turisticka?q=%C5%BDlebsk%C3%A1%20Lhotka&source=ward&id=13485&ds=1&x=15.5570644&y=49.9014353&z=14", foto:"https://photos.app.goo.gl/b8W9oXdNXxcGaiJBA" },
-  { kdy:"podzim 2017", kde:"Vracov", lat:48.9515979, lng:17.2173283, loc:"https://mapy.com/cs/turisticka?q=Vracov&source=muni&id=5685&ds=1&x=17.2173283&y=48.9515979&z=12", foto:"https://photos.app.goo.gl/BlrA8JDNBsRJuzZ02" },
-  { kdy:"jaro 2017", kde:"Křižánky", lat:49.6850763, lng:16.063617, loc:"https://mapy.com/cs/turisticka?q=K%C5%99i%C5%BE%C3%A1nky&source=muni&id=5322&ds=1&x=16.0636170&y=49.6850763&z=13", foto:"https://goo.gl/photos/Uikc21dVi2ekt5Sh9" },
-  { kdy:"podzim 2016", kde:"Bohutín - Brdy", lat:49.6567458, lng:13.9465106, loc:"https://mapy.com/cs/turisticka?q=Bohut%C3%ADn&source=muni&id=4309&ds=1&x=13.9465106&y=49.6567458&z=13", foto:"https://goo.gl/photos/USEyKhc3Mq1LjpSe6" },
-  { kdy:"jaro2016", kde:"Jelení vyhlídka - Novohradské hory", lat:48.6330748, lng:14.5869939, loc:"https://mapy.com/cs/turisticka?q=Penzion%20Jelen%C3%AD%20Vyhl%C3%ADdka&source=firm&id=12974496&ds=1&x=14.5869939&y=48.6330748&z=17", foto:"https://photos.app.goo.gl/8eat58jB2Xc8D9iD6" },
-  { kdy:"podzim 2015", kde:"Mozolov", lat:49.5077933, lng:14.4584537, loc:"https://mapy.com/cs/turisticka?q=Mozolov&source=ward&id=14101&ds=1&x=14.4584537&y=49.5077933&z=14", foto:"https://photos.app.goo.gl/ozyfKqDjWKKBLNko6" },
-  { kdy:"jaro 2015", kde:"Lužické hory", lat:50.8584365, lng:14.569237, loc:"https://mapy.com/cs/turisticka?q=Ji%C5%99et%C3%ADn%20pod%20Jedlovou&source=muni&id=1689&ds=1&x=14.5692370&y=50.8584365&z=13", foto:"https://photos.app.goo.gl/1KW4XNwkY6Yy6ABk7" },
-  { kdy:"podzim 2014", kde:"Šumava - pěší", lat:49.1458272, lng:13.1123058, loc:"https://mapy.com/cs/turisticka?source=firm&id=13086689&x=13.1123058&y=49.1458272&z=11", foto:"https://photos.app.goo.gl/eSqXMMyrEkPam7JD6" },
-  { kdy:"září 2014", kde:"Litoměřicko", lat:50.4736823, lng:14.028338, loc:"https://mapy.com/cs/turisticka?source=base&id=1898948&ds=1&x=14.0283380&y=50.4736823&z=12", foto:"https://photos.app.goo.gl/viRFz9tBM8JYgP2m8" },
-  { kdy:"jaro 2013", kde:"Lipno", lat:48.7814, lng:14.0084, loc:"https://mapy.com/cs/turisticka?q=Resort%20ORSINO&source=firm&id=12901548&ds=1&x=14.0214422&y=48.7684561&z=17", foto:"https://photos.app.goo.gl/jwYbnVu6Fimowi6v5" },
-  { kdy:"podzim 2012", kde:"Český les", lat:49.5253, lng:12.6583, loc:"https://mapy.com/cs/turisticka?q=rybn%C3%ADk%20%C4%8Desk%C3%BD%20les&source=firm&id=1461337&ds=2&x=12.6743703&y=49.5133304&z=16", foto:"https://photos.app.goo.gl/zN6aEWrsApXt7KEh6" },
-  { kdy:"léto 2012", kde:"Rybník Český les", lat:49.5013, lng:12.6903, loc:"https://mapy.com/cs/turisticka?q=rybn%C3%ADk%20%C4%8Desk%C3%BD%20les&source=firm&id=1461337&ds=2&x=12.6743703&y=49.5133304&z=16", foto:"https://photos.app.goo.gl/apm9qTMWsgJSk7p29" },
-  { kdy:"jaro 2012", kde:"Lipno", lat:48.7554, lng:14.0344, loc:"https://mapy.com/cs/turisticka?q=Resort%20ORSINO&source=firm&id=12901548&ds=1&x=14.0214422&y=48.7684561&z=17", foto:"https://photos.app.goo.gl/GCPBYapX4BMWkFgq6" },
-  { kdy:"jaro 2011", kde:"Krušné hory", lat:50.3760926, lng:12.8682981, loc:"https://mapy.com/cs/turisticka?q=Biatlonov%C3%BD%20are%C3%A1l%20Eduard&source=firm&id=12917359&ds=2&x=12.8682981&y=50.3760926&z=14", foto:"https://photos.app.goo.gl/uMweJ2mBdFwTny7w6" },
-  { kdy:"podzim 2010", kde:"Regensburg", lat:49.0206075, lng:12.1103413, loc:"https://mapy.com/cs/turisticka?q=%C5%98ezno%20(Regensburg)&source=osm&id=1611&ds=1&x=12.1103413&y=49.0206075&z=12", foto:"https://photos.app.goo.gl/ps7irDnKSAMdVoUPA" },
-  { kdy:"jaro 2010", kde:"Loučeň", lat:50.2869595, lng:15.024572, loc:"https://mapy.com/cs/turisticka?q=lou%C4%8De%C5%88%20z%C3%A1mek&source=firm&id=435551&ds=2&x=15.0245720&y=50.2869595&z=17", foto:"https://photos.app.goo.gl/T3Y22C8ZgL7M9baY7" },
-  { kdy:"podzim 2009", kde:"Pecák", lat:49.1260313, lng:14.8317497, loc:"https://mapy.com/cs/turisticka?source=firm&id=12936804&ds=1&x=14.8317497&y=49.1260313&z=17", foto:"https://photos.app.goo.gl/G7h7b3Muz2Y8ztGRA" },
-  { kdy:"jaro 2009", kde:"Děčín-Dresden", lat:50.9237629, lng:14.1862846, loc:"https://mapy.com/cs/turisticka?q=Bad%20Schandau&source=osm&id=82606&ds=1&x=14.1862846&y=50.9237629&z=12", foto:"https://photos.app.goo.gl/PmaN3PnSLRL8UmZt7" },
-  { kdy:"jaro 2008", kde:"Břeclav", lat:48.7383928, lng:16.8699132, loc:"https://mapy.com/cs/turisticka?q=B%C5%99eclav&source=muni&id=5870&ds=1&x=16.8699132&y=48.7383928&z=11", foto:"https://photos.app.goo.gl/6daoWjXFuJUJDdQo9" },
-  { kdy:"podzim 2007", kde:"Ponědraž", lat:49.1279585, lng:14.6668238, loc:"https://mapy.com/cs/turisticka?q=Pon%C4%9Bdra%C5%BE&source=muni&id=1699&ds=1&x=14.6668238&y=49.1279585&z=12", foto:"https://photos.app.goo.gl/CL4q1u3f3Cude3vTA" },
-  { kdy:"jaro 2007", kde:"Stráž nad Nežárkou", lat:49.0326493, lng:14.9448187, loc:"https://mapy.com/cs/turisticka?q=st%C3%A1%C5%BE%20na%20ne%C5%BE%C3%A1rkou&source=muni&id=774&ds=2&x=14.9448187&y=49.0326493&z=12", foto:"https://photos.app.goo.gl/ogVkkoBHiRKhigrn6" },
-  { kdy:"léto 2006", kde:"Lednice", lat:48.8070797, lng:16.8023597, loc:"https://mapy.com/cs/turisticka?q=Lednice&source=muni&id=5897&ds=1&x=16.8023597&y=48.8070797&z=13", foto:"https://photos.app.goo.gl/Mygsg2EC563Xesrz8" }
+  { kdy:"jaro 2026", kde:"Sušice", year:"2026", lat:49.2303276, lng:13.5197009, loc:"https://mapy.com/cs/turisticka?q=JEZ%26SPI%20Su%C5%A1ice&source=firm&id=13297260&ds=1&x=13.5197009&y=49.2303276&z=17", foto:"https://photos.app.goo.gl/3NPg6mSrj9p26QGa7" },
+  { kdy:"podzim 2025", kde:"Litoměřice", year:"2025", lat:50.5428694, lng:14.140905, loc:"https://mapy.com/cs/turisticka?q=Litom%C4%9B%C5%99ice&source=muni&id=1864&ds=1&x=14.1409050&y=50.5428694&z=12", foto:"https://photos.app.goo.gl/wyQr584PH3cLeEYX8" },
+  { kdy:"jaro 2025", kde:"Kroměříž", year:"2025", lat:49.2802262, lng:17.4006191, loc:"https://mapy.com/cs/turisticka?q=Krom%C4%9B%C5%99%C3%AD%C5%BE&source=muni&id=3117&ds=1&x=17.4006191&y=49.2802262&z=12", foto:"https://photos.app.goo.gl/6EpEhpMq8nNFhm3i6" },
+  { kdy:"podzim 2024", kde:"Broumov", year:"2024", lat:50.5995311, lng:16.3473304, loc:"https://mapy.com/cs/turisticka?q=Broumov&source=muni&id=2469&ds=1&x=16.3473304&y=50.5995311&z=12", foto:"https://photos.app.goo.gl/2hviimxtxq9V1rDQ8" },
+  { kdy:"jaro 2024", kde:"Nové Město n. Metují", year:"2024", lat:50.3510712, lng:16.1468419, loc:"https://mapy.com/cs/turisticka?q=Nov%C3%A9%20M%C4%9Bsto%20nad%20Metuj%C3%AD&source=muni&id=2504&ds=1&x=16.1468419&y=50.3510712&z=13", foto:"https://photos.app.goo.gl/Mfwzm5NyECsEp5P87" },
+  { kdy:"podzim 2023", kde:"Dražíč", year:"2023", lat:49.3071685, lng:14.3678051, loc:"https://mapy.com/cs/turisticka?q=Dra%C5%BE%C3%AD%C4%8D&source=muni&id=4826&ds=1&x=14.3678051&y=49.3071685&z=13", foto:"https://photos.app.goo.gl/a4htnx6VdyJio1Q16" },
+  { kdy:"jaro 2023", kde:"Luka nad Jihlavou", year:"2023", lat:49.3776849, lng:15.7022484, loc:"https://mapy.com/cs/turisticka?q=Luka%20nad%20Jihlavou&source=muni&id=5143&ds=1&x=15.7022484&y=49.3776849&z=12", foto:"https://photos.app.goo.gl/jAUXiydZgHB1t4bK8" },
+  { kdy:"podzim 2022", kde:"Krásná Lípa", year:"2022", lat:50.9108735, lng:14.4833708, loc:"https://mapy.com/cs/turisticka?q=Kr%C3%A1sn%C3%A1%20L%C3%ADpa&source=muni&id=1693&ds=1&x=14.4833708&y=50.9108735&z=12", foto:"https://photos.app.goo.gl/LKbFXrLvTCsrHf8X8" },
+  { kdy:"jaro 2022", kde:"Kladská - Slavkovský les", year:"2022", lat:50.0305566, lng:12.6589932, loc:"https://mapy.com/cs/turisticka?q=Kladsk%C3%A1&source=ward&id=5470&ds=1&x=12.6589932&y=50.0305566&z=13", foto:"https://photos.app.goo.gl/zsTqk44MzRuZWNMc6" },
+  { kdy:"podzim 2021", kde:"Studenec - Podkrkonoší", year:"2021", lat:50.5697717, lng:15.5413497, loc:"https://mapy.com/cs/turisticka?source=firm&id=198603&ds=1&x=15.5413497&y=50.5697717&z=17", foto:"https://photos.app.goo.gl/aHixNwdMXGWqW4S38" },
+  { kdy:"jaro 2020", kde:"Čtyřkoly", year:"2020", lat:49.8728741, lng:14.7143029, loc:"https://mapy.com/cs/turisticka?q=%C4%8Dty%C5%99koly&source=muni&id=3482&ds=2&x=14.7143029&y=49.8728741&z=14", foto:"https://photos.app.goo.gl/QTECouTwE73a4Zzp9" },
+  { kdy:"podzim 2019", kde:"Onen svět", year:"2019", lat:49.5590203, lng:14.2378634, loc:"https://mapy.com/cs/turisticka?q=Langova%20rozhledna&source=base&id=1834700&ds=1&x=14.2378634&y=49.5590203&z=17", foto:"https://photos.app.goo.gl/yDQwEnVpEjQMsoH56" },
+  { kdy:"jaro 2019", kde:"Josefův důl", year:"2019", lat:50.7937535, lng:15.2138523, loc:"https://mapy.com/cs/turisticka?q=josefuv%20dul&source=muni&id=1793&ds=2&x=15.2138523&y=50.7937535&z=12", foto:"https://photos.app.goo.gl/kmoUc2LHiA3AKjTh6" },
+  { kdy:"jaro 2018", kde:"Žlebská Lhotka - Železné hory", year:"2018", lat:49.9014353, lng:15.5570644, loc:"https://mapy.com/cs/turisticka?q=%C5%BDlebsk%C3%A1%20Lhotka&source=ward&id=13485&ds=1&x=15.5570644&y=49.9014353&z=14", foto:"https://photos.app.goo.gl/b8W9oXdNXxcGaiJBA" },
+  { kdy:"podzim 2017", kde:"Vracov", year:"2017", lat:48.9515979, lng:17.2173283, loc:"https://mapy.com/cs/turisticka?q=Vracov&source=muni&id=5685&ds=1&x=17.2173283&y=48.9515979&z=12", foto:"https://photos.app.goo.gl/BlrA8JDNBsRJuzZ02" },
+  { kdy:"jaro 2017", kde:"Křižánky", year:"2017", lat:49.6850763, lng:16.063617, loc:"https://mapy.com/cs/turisticka?q=K%C5%99i%C5%BE%C3%A1nky&source=muni&id=5322&ds=1&x=16.0636170&y=49.6850763&z=13", foto:"https://goo.gl/photos/Uikc21dVi2ekt5Sh9" },
+  { kdy:"podzim 2016", kde:"Bohutín - Brdy", year:"2016", lat:49.6567458, lng:13.9465106, loc:"https://mapy.com/cs/turisticka?q=Bohut%C3%ADn&source=muni&id=4309&ds=1&x=13.9465106&y=49.6567458&z=13", foto:"https://goo.gl/photos/USEyKhc3Mq1LjpSe6" },
+  { kdy:"jaro2016", kde:"Jelení vyhlídka - Novohradské hory", year:"2016", lat:48.6330748, lng:14.5869939, loc:"https://mapy.com/cs/turisticka?q=Penzion%20Jelen%C3%AD%20Vyhl%C3%ADdka&source=firm&id=12974496&ds=1&x=14.5869939&y=48.6330748&z=17", foto:"https://photos.app.goo.gl/8eat58jB2Xc8D9iD6" },
+  { kdy:"podzim 2015", kde:"Mozolov", year:"2015", lat:49.5077933, lng:14.4584537, loc:"https://mapy.com/cs/turisticka?q=Mozolov&source=ward&id=14101&ds=1&x=14.4584537&y=49.5077933&z=14", foto:"https://photos.app.goo.gl/ozyfKqDjWKKBLNko6" },
+  { kdy:"jaro 2015", kde:"Lužické hory", year:"2015", lat:50.8584365, lng:14.569237, loc:"https://mapy.com/cs/turisticka?q=Ji%C5%99et%C3%ADn%20pod%20Jedlovou&source=muni&id=1689&ds=1&x=14.5692370&y=50.8584365&z=13", foto:"https://photos.app.goo.gl/1KW4XNwkY6Yy6ABk7" },
+  { kdy:"podzim 2014", kde:"Šumava - pěší", year:"2014", lat:49.1458272, lng:13.1123058, loc:"https://mapy.com/cs/turisticka?source=firm&id=13086689&x=13.1123058&y=49.1458272&z=11", foto:"https://photos.app.goo.gl/eSqXMMyrEkPam7JD6" },
+  { kdy:"září 2014", kde:"Litoměřicko", year:"2014", lat:50.4736823, lng:14.028338, loc:"https://mapy.com/cs/turisticka?source=base&id=1898948&ds=1&x=14.0283380&y=50.4736823&z=12", foto:"https://photos.app.goo.gl/viRFz9tBM8JYgP2m8" },
+  { kdy:"jaro 2014", kde:"Krušné hory - přejezd", year:"2014", lat:50.3840077, lng:12.6273465, loc:"https://mapy.com/cs/turisticka?q=P%C5%99ebuz&source=muni&id=1544&ds=1&x=12.6273465&y=50.3840077&z=13", foto:"https://photos.app.goo.gl/QwZzLSJUKYHbHhvt6" },
+  { kdy:"podzim 2013", kde:"Doksy", year:"2013", lat:50.5512402, lng:14.6663692, loc:"https://mapy.com/cs/turisticka?source=muni&id=1601&ds=1&x=14.6663692&y=50.5512402&z=12", foto:"https://photos.app.goo.gl/iuvhjxuvZVHXyVkg8" },
+  { kdy:"jaro 2013", kde:"Lipno", year:"2013", lat:48.7684561, lng:14.0214422, loc:"https://mapy.com/cs/turisticka?q=Resort%20ORSINO&source=firm&id=12901548&ds=1&x=14.0214422&y=48.7684561&z=17", foto:"https://photos.app.goo.gl/jwYbnVu6Fimowi6v5" },
+  { kdy:"podzim 2012", kde:"Český les", year:"2012", lat:49.5133304, lng:12.6743703, loc:"https://mapy.com/cs/turisticka?q=rybn%C3%ADk%20%C4%8Desk%C3%BD%20les&source=firm&id=1461337&ds=2&x=12.6743703&y=49.5133304&z=16", foto:"https://photos.app.goo.gl/zN6aEWrsApXt7KEh6" },
+  { kdy:"léto 2012", kde:"Rybník Český les", year:"2012", lat:49.5133304, lng:12.6743703, loc:"https://mapy.com/cs/turisticka?q=rybn%C3%ADk%20%C4%8Desk%C3%BD%20les&source=firm&id=1461337&ds=2&x=12.6743703&y=49.5133304&z=16", foto:"https://photos.app.goo.gl/apm9qTMWsgJSk7p29" },
+  { kdy:"jaro 2012", kde:"Lipno", year:"2012", lat:48.7684561, lng:14.0214422, loc:"https://mapy.com/cs/turisticka?q=Resort%20ORSINO&source=firm&id=12901548&ds=1&x=14.0214422&y=48.7684561&z=17", foto:"https://photos.app.goo.gl/GCPBYapX4BMWkFgq6" },
+  { kdy:"podzim 2011", kde:"Krušné hory", year:"2011", lat:50.38224, lng:12.8912256, loc:"https://mapy.com/cs/turisticka?q=Biatlonov%C3%BD%20are%C3%A1l%20Eduard&source=firm&id=12917359&ds=1&x=12.8912256&y=50.3822400&z=17", foto:"https://photos.app.goo.gl/6PzqhCM5YDABujMD6" },
+  { kdy:"jaro 2011", kde:"Krušné hory", year:"2011", lat:50.38224, lng:12.8912256, loc:"https://mapy.com/cs/turisticka?q=Biatlonov%C3%BD%20are%C3%A1l%20Eduard&source=firm&id=12917359&ds=1&x=12.8912256&y=50.3822400&z=17", foto:"https://photos.app.goo.gl/uMweJ2mBdFwTny7w6" },
+  { kdy:"podzim 2010", kde:"Regensburg", year:"2010", lat:49.0206075, lng:12.1103413, loc:"https://mapy.com/cs/turisticka?q=%C5%98ezno%20(Regensburg)&source=osm&id=1611&ds=1&x=12.1103413&y=49.0206075&z=12", foto:"https://photos.app.goo.gl/ps7irDnKSAMdVoUPA" },
+  { kdy:"jaro 2010", kde:"Loučeň", year:"2010", lat:50.2869595, lng:15.024572, loc:"https://mapy.com/cs/turisticka?q=lou%C4%8De%C5%88%20z%C3%A1mek&source=firm&id=435551&ds=2&x=15.0245720&y=50.2869595&z=17", foto:"https://photos.app.goo.gl/T3Y22C8ZgL7M9baY7" },
+  { kdy:"podzim 2009", kde:"Pecák", year:"2009", lat:49.1260313, lng:14.8317497, loc:"https://mapy.com/cs/turisticka?source=firm&id=12936804&ds=1&x=14.8317497&y=49.1260313&z=17", foto:"https://photos.app.goo.gl/G7h7b3Muz2Y8ztGRA" },
+  { kdy:"jaro 2009", kde:"Děčín-Dresden", year:"2009", lat:50.9237629, lng:14.1862846, loc:"https://mapy.com/cs/turisticka?q=Bad%20Schandau&source=osm&id=82606&ds=1&x=14.1862846&y=50.9237629&z=12", foto:"https://photos.app.goo.gl/PmaN3PnSLRL8UmZt7" },
+  { kdy:"podzim 2008", kde:"Pecák", year:"2008", lat:49.1260313, lng:14.8317497, loc:"https://mapy.com/cs/turisticka?source=firm&id=12936804&ds=1&x=14.8317497&y=49.1260313&z=17", foto:"https://photos.app.goo.gl/Wdp3raqfGmpTFEPJ7" },
+  { kdy:"jaro 2008", kde:"Břeclav", year:"2008", lat:48.7383928, lng:16.8699132, loc:"https://mapy.com/cs/turisticka?q=B%C5%99eclav&source=muni&id=5870&ds=1&x=16.8699132&y=48.7383928&z=11", foto:"https://photos.app.goo.gl/6daoWjXFuJUJDdQo9" },
+  { kdy:"podzim 2007", kde:"Ponědraž", year:"2007", lat:49.1279585, lng:14.6668238, loc:"https://mapy.com/cs/turisticka?q=Pon%C4%9Bdra%C5%BE&source=muni&id=1699&ds=1&x=14.6668238&y=49.1279585&z=12", foto:"https://photos.app.goo.gl/CL4q1u3f3Cude3vTA" },
+  { kdy:"jaro 2007", kde:"Stráž nad Nežárkou", year:"2007", lat:49.0326493, lng:14.9448187, loc:"https://mapy.com/cs/turisticka?q=st%C3%A1%C5%BE%20na%20ne%C5%BE%C3%A1rkou&source=muni&id=774&ds=2&x=14.9448187&y=49.0326493&z=12", foto:"https://photos.app.goo.gl/ogVkkoBHiRKhigrn6" },
+  { kdy:"léto 2006", kde:"Lednice", year:"2006", lat:48.8070797, lng:16.8023597, loc:"https://mapy.com/cs/turisticka?q=Lednice&source=muni&id=5897&ds=1&x=16.8023597&y=48.8070797&z=13", foto:"https://photos.app.goo.gl/Mygsg2EC563Xesrz8" }
 ];
 
 // Update count
@@ -440,19 +462,36 @@ L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
   maxZoom: 17
 }).addTo(map);
 
-function bikeIcon() {
+function bikeIcon(year) {
   return L.divIcon({
     className: '',
-    html: '<div class="bike-marker"><div class="bike-marker-inner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1a1a0e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="16" r="3.5"/><circle cx="18.5" cy="16" r="3.5"/><path d="M5.5 16 10 7h5l3.5 9"/><path d="M10 7h5"/><path d="M8 11h6"/><circle cx="14" cy="5" r="1"/></svg></div></div>',
-    iconSize: [36, 36],
+    html: '<div class="bike-marker"><div class="bike-marker-inner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1a1a0e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="16" r="3.5"/><circle cx="18.5" cy="16" r="3.5"/><path d="M5.5 16 10 7h5l3.5 9"/><path d="M10 7h5"/><path d="M8 11h6"/><circle cx="14" cy="5" r="1"/></svg></div>' +
+      (year ? '<div class="bike-year">' + year + '</div>' : '') +
+      '</div>',
+    iconSize: [36, 48],
     iconAnchor: [18, 36],
-    popupAnchor: [0, -36]
+    popupAnchor: [0, -38]
   });
 }
 
+// Offsets for duplicate locations so icons don't overlap
+var offsets = {
+  "podzim 2012": [0.030, -0.034],   // Český les - shift left/up
+  "léto 2012":   [-0.030, 0.034],   // Rybník Český les - shift right/down
+  "jaro 2013":   [0.028, -0.028],   // Lipno 2013 - shift
+  "jaro 2012":   [-0.028, 0.028],   // Lipno 2012 - shift other way
+  "podzim 2011": [0.026, -0.026],   // Krušné hory podzim
+  "jaro 2011":   [-0.026, 0.026],   // Krušné hory jaro
+  "podzim 2008": [0.022, -0.022],   // Pecák podzim
+  "podzim 2009": [-0.022, 0.022]    // Pecák jaro
+};
+
 // Place markers
 trips.forEach(function(t, i) {
-  var marker = L.marker([t.lat, t.lng], { icon: bikeIcon() });
+  var off = offsets[t.kdy] || [0, 0];
+  var lat = t.lat + off[0];
+  var lng = t.lng + off[1];
+  var marker = L.marker([lat, lng], { icon: bikeIcon(t.year) });
   var popup = L.popup({ maxWidth: 280 }).setContent(
     '<div class="popup-kde">' + t.kde + '</div>' +
     '<div class="popup-kdy">' + t.kdy + '</div>' +
@@ -464,6 +503,8 @@ trips.forEach(function(t, i) {
   marker.bindPopup(popup);
   marker.addTo(map);
   t._marker = marker;
+  t._lat = lat;
+  t._lng = lng;
 });
 
 // --- CARD GRID ---
